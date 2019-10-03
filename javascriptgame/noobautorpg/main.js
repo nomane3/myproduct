@@ -18,6 +18,16 @@ let myattacktime;
 let mobattacktime;
 console.log(stat);
 //ランダム関数色々
+let ran ={
+	getran : function(ran_num) {
+		rand = Math.floor(Math.random()*(ran_num+1));
+		return rand;
+	},
+	getran255 : function(){
+		rand = Math.floor(Math.random()*256);
+		return rand;
+	}
+}
 function getrandm255() {
 	rand = Math.floor(Math.random() * 256);
 	return rand;
@@ -79,7 +89,7 @@ function myattak(){
 	}else if (mystat[1] <= 0){
 		endbattle("me0")
 	}else{
-		mobstat[1] = (mobstat[1] - (myatk * mobreg).toFixed(2)).toFixed(2);
+		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobreg).toFixed(2));
 		screenup();
 	}
 }
@@ -94,7 +104,7 @@ function mobattak(){
 	setTimeout(endbattle,100,"mob0");
 	}
 	else{
-		mystat[1] = (mystat[1] - (mobatk*myreg).toFixed(2)).toFixed(2);
+		mystat[1] = Math.floor(mystat[1] - (mobatk*myreg).toFixed(2));
 		screenup();
 	}
 }
@@ -109,13 +119,14 @@ function endbattle(deadman){
 	}
 	if (deadman === "me0"){
 		mystat[1] = mystat[0];
+		createmob(mystat[9]);
 		screenup();
 	}
 }
 //新しいモンスターの作成
 function createmob(moblevel){
 	//モンスターレベルの増加
-	moblevel = moblevel + getrandm();
+	moblevel += ran.getran(1);
 	mobstat[9] = moblevel;
 	//モンスターレベルによる倍率
 	let levelmag = mobstat[9] ;
@@ -152,8 +163,8 @@ function screenup(){
 	mobvit.textContent ="VIT："+mobstat[5];
 	mobint.textContent ="INT："+mobstat[6];
 	mobluk.textContent ="LUK："+mobstat[7];
-	mydamage.textContent =mobatk;
-	mobdamage.textContent = myatk;
+	mydamage.textContent = Math.floor(mobatk*myreg);
+	mobdamage.textContent = Math.floor(myatk*mobreg);
 }
 window.onload = statupdate(),startmyattack(),startmobattack();
 setInterval(statupdate,1000);
