@@ -1,0 +1,64 @@
+div{
+	position: absolute;
+}
+#waku{
+	width: 1024px;
+	height: 768px;
+}
+#hp{
+	margin-top: 100px;
+	margin-left: 100px;
+	min-width: 300px;
+	min-height: 100px;
+	border: solid 1px black;
+}
+#hp > *{
+	display: block;
+	position: initial;
+}
+#stat{
+	margin-top: 250px;
+	margin-left: 100px;
+	min-width: 300px;
+	max-width: 300px;
+	min-height: 300px;
+	border: solid 1px black;
+}
+.stat > *{
+	position:relative;
+	display:inline-block;
+	min-width: 150px;
+}
+.stat2 > *{
+	position:relative;
+	display:block;
+	min-width: 300px;
+}
+.bps{
+ position: initial;
+ display: inline-block;
+ border: solid 1px black;
+ text-align: center;
+ min-width: 22px;
+ max-width: 22px;
+ height: 22px;
+
+}
+#mobhp{
+	margin-top: 100px;
+	margin-left: 450px;
+	min-width: 300px;
+	min-height: 100px;
+	border: solid 1px black;
+}
+#mobhp> *{
+	display: block;
+	position: initial;
+}
+#mobstat{
+	margin-top: 250px;
+	margin-left: 450px;
+	min-width: 300px;
+	min-height: 300px;
+	border: solid 1px black;
+}
