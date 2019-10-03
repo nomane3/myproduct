@@ -16,7 +16,6 @@ document.getElementById(mobhp);
 document.getElementById(mobstat);
 let myattacktime;
 let mobattacktime;
-console.log(stat);
 //ランダム関数色々
 let ran ={
 	getran : function(ran_num) {
@@ -41,7 +40,7 @@ function getrandam(ran_num) {
 	return rand;
 }
 //exptableを呼び出すと次のレベルアップの必要経験値を吐き出す
-let exptable = function(){return mystat[9]*mystat[9]+10;}
+let exptable = function(){return (mystat[9]*mystat[9])+10;}
 //計算が必要なステータスの更新
 function statupdate(){
 	levelup();
@@ -59,6 +58,7 @@ function statupdate(){
 function levelup(){
 	for (;mystat[8] >= exptable();){
 		mystat[9]++;
+		mystat[8] -= exptable();
 		mystat[10] += 60;
 	}
 }
@@ -96,7 +96,6 @@ function myattak(){
 //敵の攻撃
 function mobattak(){
 	if(mystat[1] <= 0) {
-		console.log("sinndaa");
 		screenup();
 		setTimeout(endbattle,100,"me0");
 	}else if (mobstat[1] <= 0){
@@ -114,6 +113,7 @@ function endbattle(deadman){
 	if (deadman === "mob0"){
 		mystat[8] += mobstat[8];
 		mystat[1] = mystat[0];
+		getexp.textContent = "You get EXP :" +mobstat[8];
 		createmob(mobstat[9]);
 		screenup();
 	}
@@ -130,11 +130,9 @@ function createmob(moblevel){
 	mobstat[9] = moblevel;
 	//モンスターレベルによる倍率
 	let levelmag = mobstat[9] ;
-	console.log();
 	//ベースに倍率を乗算
 	for (i=0;i<mobstat.length-1;i++){
 		mobstat[i] = basemobstat[i]*levelmag;
-		console.log(mobstat[i]);
 	}
 	mobstat[0] = mobstat[9]*100+mobstat[5]*5;
 	mobstat[1] = mobstat[0];
