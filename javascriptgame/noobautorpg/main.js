@@ -57,14 +57,15 @@ function statupdate(){
 //レベルアップ処理
 function levelup(){
 	for (;mystat[8] >= exptable();){
-		mystat[9]++;
 		mystat[8] -= exptable();
+		mystat[9]++;
 		mystat[10] += 60;
+		exptable();
 	}
 }
 //bp振り分け
 function addstat(usepoint,upstat){
-	if (mystat[10]>usepoint){
+	if (mystat[10]>=usepoint){
 		if (usepoint>=100){
 			for (i=0;i<(usepoint/100);i++){
 				mystat[upstat] +=100;
@@ -86,8 +87,10 @@ function addstat(usepoint,upstat){
 function myattak(){
 	if(mobstat[1] <= 0) {
 		endbattle("mob0");
+		setTimeout(endbattle,100,"mob0");
 	}else if (mystat[1] <= 0){
-		endbattle("me0")
+		endbattle("me0");
+		setTimeout(endbattle,100,"me0");
 	}else{
 		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobreg).toFixed(2));
 		screenup();
@@ -98,9 +101,11 @@ function mobattak(){
 	if(mystat[1] <= 0) {
 		screenup();
 		setTimeout(endbattle,100,"me0");
+
 	}else if (mobstat[1] <= 0){
 		screenup()
 	setTimeout(endbattle,100,"mob0");
+
 	}
 	else{
 		mystat[1] = Math.floor(mystat[1] - (mobatk*myreg).toFixed(2));
@@ -119,16 +124,23 @@ function endbattle(deadman){
 	}
 	if (deadman === "me0"){
 		mystat[1] = mystat[0];
-		createmob(mystat[9]);
+		createmob(mystat[9],true);
 		screenup();
 	}
 }
 //新しいモンスターの作成
-function createmob(moblevel){
+function createmob(moblevel,deading){
 	//モンスターレベルの増加
-	moblevel += ran.getran(1);
+	if (deading === true){
+		moblevel = moblevel;
+	}else{
+		moblevel += ran.getran(1);
+	}
+	if (deading === true){
+		moblevel = moblevel;
+	}
 	mobstat[9] = moblevel;
-	//モンスターレベルによる倍率
+	//モンスターレベルによる倍率調整を容易にするため別変数を宣言
 	let levelmag = mobstat[9] ;
 	//ベースに倍率を乗算
 	for (i=0;i<mobstat.length-1;i++){
@@ -161,8 +173,9 @@ function screenup(){
 	mobvit.textContent ="VIT："+mobstat[5];
 	mobint.textContent ="INT："+mobstat[6];
 	mobluk.textContent ="LUK："+mobstat[7];
-	mydamage.textContent = Math.floor(mobatk*myreg);
-	mobdamage.textContent = Math.floor(myatk*mobreg);
+	mydamage.textContent = Math.ceil(mobatk*myreg);
+	mobdamage.textContent = Math.ceil(myatk*mobreg);
+	nowexp.textContent = "exp:"+ mystat[8] +"/"+ exptable();
 }
 window.onload = statupdate(),startmyattack(),startmobattack();
 setInterval(statupdate,1000);
