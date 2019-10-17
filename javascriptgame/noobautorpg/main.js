@@ -27,15 +27,7 @@ let ran ={
 		return rand;
 	}
 }
-function getrandm255() {
-	rand = Math.floor(Math.random() * 256);
-	return rand;
-}
-function getrandm() {
-	rand = Math.floor(Math.random() * 2);
-	return rand;
-}
-function getrandam(ran_num) {
+function rnd(ran_num) {
 	rand = Math.floor(Math.random() * ran_num);
 	return rand;
 }
@@ -45,12 +37,12 @@ let exptable = function(){return (mystat[9]*mystat[9])+10;}
 function statupdate(){
 	levelup();
 	mystat[0] = mystat[9]*100+mystat[5]*5;
-	myatk = (mystat[2]+((mystat[2]*mystat[2])/10)*((mystat[3]/360)+1)).toFixed(2);
-	mobatk = (mobstat[2]+((mobstat[2]*mobstat[2])/10)*((mobstat[3]/360)+1)).toFixed(2);
-	myintrv = 700;
-	mobintrv = 700;
-	myreg = (1-mystat[2]/(1000+mystat[2]))*(1-(mystat[5]/(500+mystat[5])))*(1-(mystat[6]/5)/(500+(mystat[6]/5)));
-	mobreg = (1-mobstat[2]/(1000+mobstat[2]))*(1-(mobstat[5]/(500+mobstat[5])))*(1-(mobstat[6]/5)/(500+(mobstat[6]/5)));
+	myatk = (mystat[2]+(mystat[2]/5)*((mystat[3]/360)+1)).toFixed(2);
+	mobatk = (mobstat[2]+(mobstat[2]/5)*((mobstat[3]/360)+1)).toFixed(2);
+	myreg = (1-(mystat[2]/(1000+mystat[2])))*(1-(mystat[5]/(500+mystat[5])))*(1-(mystat[6]/5)/(500+(mystat[6]/5)));
+	mobreg = (1-(mobstat[2]/(1000+mobstat[2])))*(1-(mobstat[5]/(500+mobstat[5])))*(1-(mobstat[6]/5)/(500+(mobstat[6]/5)));
+	myintrv = 100+ 900*(1-(mystat[3]/(1000+mystat[3])));
+	mobintrv = 100+ 900*(1-(mobstat[3]/(1000+mobstat[3])));	
 	console.log(exptable(),mystat[8]);
 	screenup();
 }
@@ -59,6 +51,9 @@ function levelup(){
 	for (;mystat[8] >= exptable();){
 		mystat[8] -= exptable();
 		mystat[9]++;
+		for (i=2;i<=7;i++){
+			mystat[i]+=10;
+		}
 		mystat[10] += 60;
 		exptable();
 	}
@@ -125,8 +120,8 @@ function endbattle(deadman){
 	//敵が死んだ場合の処理
 	if (deadman === "mob0"){
 		mystat[8] += mobstat[8];
-		mystat[1] = mystat[0];
 		getexp.textContent = "You get EXP :" +mobstat[8];
+		mystat[1] = mystat[0];
 		createmob(mobstat[9]);
 		screenup();
 	}
@@ -143,10 +138,7 @@ function createmob(moblevel,deading){
 	if (deading === true){
 		moblevel = moblevel;
 	}else{
-		moblevel += ran.getran(1);
-	}
-	if (deading === true){
-		moblevel = moblevel;
+		moblevel += rnd(2);
 	}
 	mobstat[9] = moblevel;
 	//モンスターレベルによる倍率調整を容易にするため別変数を宣言
