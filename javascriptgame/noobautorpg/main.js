@@ -83,38 +83,46 @@ function addstat(usepoint,upstat){
 }
 
 //戦闘処理
-//自分の攻撃
+//自分の攻撃フェーズ
 function myattak(){
+	//敵のHPが0以下のときにディレイをかけて戦闘終了を呼び出す
 	if(mobstat[1] <= 0) {
 		endbattle("mob0");
 		setTimeout(endbattle,100,"mob0");
-	}else if (mystat[1] <= 0){
+	}
+	//自分のHPが0以下のときにディレイをかけて戦闘終了を呼び出す
+	else if (mystat[1] <= 0){
 		endbattle("me0");
 		setTimeout(endbattle,100,"me0");
-	}else{
+	}
+	//互いのHPが0以下ではない場合戦闘ダメージを与えて終了
+	else{
 		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobreg).toFixed(2));
 		screenup();
 	}
 }
-//敵の攻撃
+//敵の攻撃フェーズ
 function mobattak(){
+	//自分のHPが0以下の場合戦闘終了を呼び出す
 	if(mystat[1] <= 0) {
 		screenup();
 		setTimeout(endbattle,100,"me0");
-
-	}else if (mobstat[1] <= 0){
+	}
+	//敵のHPが0以下の場合戦闘終了を呼び出す
+	else if (mobstat[1] <= 0){
 		screenup()
 	setTimeout(endbattle,100,"mob0");
-
 	}
+	//戦闘ダメージを与えて終了
 	else{
 		mystat[1] = Math.floor(mystat[1] - (mobatk*myreg).toFixed(2));
 		screenup();
 	}
 }
-//どちらかが死んだ場合の処理
+//どちらかが死んだ場合の処理どちらもモンスターを新規に作成する
 function endbattle(deadman){
 	screenup();
+	//敵が死んだ場合の処理
 	if (deadman === "mob0"){
 		mystat[8] += mobstat[8];
 		mystat[1] = mystat[0];
@@ -122,6 +130,7 @@ function endbattle(deadman){
 		createmob(mobstat[9]);
 		screenup();
 	}
+	//自分が死んだ場合の処理
 	if (deadman === "me0"){
 		mystat[1] = mystat[0];
 		createmob(mystat[9],true);
