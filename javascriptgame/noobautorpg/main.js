@@ -1,7 +1,44 @@
 //宣言が必要な変数置き場
-//stat順、0:maxHP,1:nowHP,2:STR,3:AGI,4:DEX,5:VIT,6:INT,7:LUK,8:exp,9:lv,10:BonusPoint
-let mystat =[100,100,10,10,10,10,10,10,0,1,0];
+//stat順、0:maxHP,1:nowHP,2:STR,3:AGI,4:DEX,5:VIT,6:INT,7:LUK,8:exp,9:lv,10:BonusPoint,11:skillpoint
+let mystat =[100,100,10,10,10,10,10,10,0,1,0,0];
 let mobstat =[30,30,10,10,10,10,10,10,10,1];
+//testmesod
+let mysts= {
+	maxhp:100,
+	nowhp:100,
+	str:10,
+	agi:10,
+	dex:10,
+	vit:10,
+	int:10,
+	luk:10,
+	exp:0,
+	lv:1,
+	BP:0,
+	SK:0,
+	reg: function(){
+		myreg = (1-(mystat[2]/(1000+mystat[2])))*(1-(mystat[5]/(500+mystat[5])))*(1-(mystat[6]/5)/(500+(mystat[6]/5)));
+		return myreg;
+	}
+}
+
+let mobsts= {
+	maxhp:30,
+	nowhp:30,
+	str:10,
+	agi:10,
+	dex:10,
+	vit:10,
+	int:10,
+	luk:10,
+	exp:10,
+	lv:1,
+	reg: function(){
+	mobreg = (1-(mobstat[2]/(1000+mobstat[2])))*(1-(mobstat[5]/(500+mobstat[5])))*(1-(mobstat[6]/5)/(500+(mobstat[6]/5)));
+	return mobreg;
+	}
+}
+
 let basemobstat =[30,30,10,10,10,10,10,10,10,1];
 let myintrv =1000;
 let mobintrv = 1000;
@@ -39,11 +76,8 @@ function statupdate(){
 	mystat[0] = mystat[9]*100+mystat[5]*5;
 	myatk = (mystat[2]+(mystat[2]/5)*((mystat[3]/360)+1)).toFixed(2);
 	mobatk = (mobstat[2]+(mobstat[2]/5)*((mobstat[3]/360)+1)).toFixed(2);
-	myreg = (1-(mystat[2]/(1000+mystat[2])))*(1-(mystat[5]/(500+mystat[5])))*(1-(mystat[6]/5)/(500+(mystat[6]/5)));
-	mobreg = (1-(mobstat[2]/(1000+mobstat[2])))*(1-(mobstat[5]/(500+mobstat[5])))*(1-(mobstat[6]/5)/(500+(mobstat[6]/5)));
 	myintrv = 100+ 900*(1-(mystat[3]/(1000+mystat[3])));
 	mobintrv = 100+ 900*(1-(mobstat[3]/(1000+mobstat[3])));	
-	console.log(exptable(),mystat[8]);
 	screenup();
 }
 //レベルアップ処理
@@ -92,7 +126,7 @@ function myattak(){
 	}
 	//互いのHPが0以下ではない場合戦闘ダメージを与えて終了
 	else{
-		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobreg).toFixed(2));
+		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobsts.reg()).toFixed(2));
 		screenup();
 	}
 }
@@ -110,7 +144,7 @@ function mobattak(){
 	}
 	//戦闘ダメージを与えて終了
 	else{
-		mystat[1] = Math.floor(mystat[1] - (mobatk*myreg).toFixed(2));
+		mystat[1] = Math.floor(mystat[1] - (mobatk*mysts.reg()).toFixed(2));
 		screenup();
 	}
 }
@@ -121,6 +155,7 @@ function endbattle(deadman){
 	if (deadman === "mob0"){
 		mystat[8] += mobstat[8];
 		getexp.textContent = "You get EXP :" +mobstat[8];
+		statupdate();
 		mystat[1] = mystat[0];
 		createmob(mobstat[9]);
 		screenup();

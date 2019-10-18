@@ -1,12 +1,39 @@
 div{
 	position: absolute;
 }
+input{
+	display: none;
+}
+div.tab{
+	position: initial;
+	display: flex;
+	width: 20%;
+	font-size: 20px;
+	padding: 0.1em;
+	margin-right: 5px;
+	border: solid 2px brown;
+	justify-content: center;
+	align-items: center;
+}
+#tab{
+	position: inherit;
+	display: flex;
+	height: 50px;
+	width: 750px;
+	margin-left: 100px;
+	margin-bottom: 50px;
+	align-items:stretch; 
+	text-align: center;
+	vertical-align: center;
+	
+}
+
 #waku{
+	position:inherit;
 	width: 1024px;
 	height: 768px;
 }
 #hp{
-	margin-top: 100px;
 	margin-left: 100px;
 	min-width: 300px;
 	min-height: 100px;
@@ -17,7 +44,7 @@ div{
 	position: initial;
 }
 #stat{
-	margin-top: 250px;
+	margin-top: 150px;
 	margin-left: 100px;
 	min-width: 300px;
 	max-width: 300px;
@@ -44,7 +71,6 @@ div{
  height: 22px;
 }
 #mobhp{
-	margin-top: 100px;
 	margin-left: 450px;
 	min-width: 300px;
 	min-height: 100px;
@@ -55,9 +81,13 @@ div{
 	position: initial;
 }
 #mobstat{
-	margin-top: 250px;
+	margin-top: 150px;
 	margin-left: 450px;
 	min-width: 300px;
 	min-height: 300px;
 	border: solid 1px black;
+}
+
+#tab1:checked ~ #tab>#battle {
+	background-color: lightsalmon;
 }
