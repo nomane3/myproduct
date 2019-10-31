@@ -1,46 +1,69 @@
 //宣言が必要な変数置き場
 //stat順、0:maxHP,1:nowHP,2:STR,3:AGI,4:DEX,5:VIT,6:INT,7:LUK,8:exp,9:lv,10:BonusPoint,11:skillpoint
-let mystat =[100,100,10,10,10,10,10,10,0,1,0,0];
-let mobstat =[30,30,10,10,10,10,10,10,10,1];
+let mystat = [150, 150, 10, 10, 10, 10, 10, 10, 0, 1, 0, 0];
+let mobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
 //testmesod
-let mysts= {
-	maxhp:100,
-	nowhp:100,
-	str:10,
-	agi:10,
-	dex:10,
-	vit:10,
-	int:10,
-	luk:10,
-	exp:0,
-	lv:1,
-	BP:0,
-	SK:0,
-	reg: function(){
-		myreg = (1-(mystat[2]/(1000+mystat[2])))*(1-(mystat[5]/(500+mystat[5])))*(1-(mystat[6]/5)/(500+(mystat[6]/5)));
+//メソッドに処理を記述して使いまわしたい処理、プロパティ名を使いまわす
+let mysts = {
+	maxhp: function () {
+		mystat[0] = mystat[9] * 100 + mystat[5] * 5;
+		return mystat[0];
+	},
+	atk: function () {
+		myatk = (mystat[2] + (mystat[2] / 5) * ((mystat[3] / 360) + 1)).toFixed(2);
+		return myatk
+	},
+	reg: function () {
+		myreg = (1 - (mystat[2] / (1000 + mystat[2]))) * (1 - (mystat[5] / (500 + mystat[5]))) * (1 - (mystat[6] / 5) / (500 + (mystat[6] / 5)));
 		return myreg;
+	},
+	intrv: function () {
+		myintrv = 100 + 900 * (1 - (mystat[3] / (1000 + mystat[3])));
+		return myintrv;
+	}
+}
+//mob側
+let mobsts = {
+	//新しいモンスターの作成処理
+	create: function (moblevel, deading) {
+		//モンスターレベルの増加
+		if (deading === true) {
+			moblevel = moblevel;
+		} else {
+			moblevel += rnd(2);
+		}
+		mobstat[9] = moblevel;
+		//モンスターレベルによる倍率調整を容易にするため別変数を宣言
+		let levelmag = mobstat[9];
+		//ベースに倍率を乗算
+		for (i = 0; i < mobstat.length - 1; i++) {
+			mobstat[i] = basemobstat[i] * levelmag;
+		}
+		mobstat[0] = mobstat[9] * 30 + mobstat[5] * 10;
+		mobstat[1] = mobstat[0];
+		startmyattack();
+		startmobattack();
+		screenup();
+		return levelmag;
+	},
+
+	atk: function () {
+		mobatk = (mobstat[2] + (mobstat[2] / 5) * ((mobstat[3] / 360) + 1)).toFixed(2);
+	},
+
+	reg: function () {
+		mobreg = (1 - (mobstat[2] / (1000 + mobstat[2]))) * (1 - (mobstat[5] / (500 + mobstat[5]))) * (1 - (mobstat[6] / 5) / (500 + (mobstat[6] / 5)));
+		return mobreg;
+	},
+
+	intrv: function () {
+		mobintrv = 100 + 900 * (1 - (mobstat[3] / (1000 + mobstat[3])));
+		return mobintrv;
 	}
 }
 
-let mobsts= {
-	maxhp:30,
-	nowhp:30,
-	str:10,
-	agi:10,
-	dex:10,
-	vit:10,
-	int:10,
-	luk:10,
-	exp:10,
-	lv:1,
-	reg: function(){
-	mobreg = (1-(mobstat[2]/(1000+mobstat[2])))*(1-(mobstat[5]/(500+mobstat[5])))*(1-(mobstat[6]/5)/(500+(mobstat[6]/5)));
-	return mobreg;
-	}
-}
-
-let basemobstat =[30,30,10,10,10,10,10,10,10,1];
-let myintrv =1000;
+let basemobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
+let myintrv = 1000;
 let mobintrv = 1000;
 let myatk;
 let mobatk;
@@ -51,179 +74,164 @@ document.getElementById(hp);
 document.getElementById(stat);
 document.getElementById(mobhp);
 document.getElementById(mobstat);
+document.getElementById(skilltab);
 let myattacktime;
 let mobattacktime;
 //ランダム関数色々
-let ran ={
-	getran : function(ran_num) {
-		rand = Math.floor(Math.random()*(ran_num+1));
+let ran = {
+	getran: function (ran_num) {
+		rand = Math.floor(Math.random() * (ran_num + 1));
 		return rand;
 	},
-	getran255 : function(){
-		rand = Math.floor(Math.random()*256);
+	getran255: function () {
+		rand = Math.floor(Math.random() * 256);
 		return rand;
 	}
 }
+
 function rnd(ran_num) {
-	rand = Math.floor(Math.random() * ran_num);
+	rand = Math.floor(Math.random() * ran_num + 1);
 	return rand;
 }
 //exptableを呼び出すと次のレベルアップの必要経験値を吐き出す
-let exptable = function(){return (mystat[9]*mystat[9])+10;}
+let exptable = function () {
+	return (mystat[9] * mystat[9]) + 10;
+}
 //計算が必要なステータスの更新
-function statupdate(){
+function statupdate() {
 	levelup();
-	mystat[0] = mystat[9]*100+mystat[5]*5;
-	myatk = (mystat[2]+(mystat[2]/5)*((mystat[3]/360)+1)).toFixed(2);
-	mobatk = (mobstat[2]+(mobstat[2]/5)*((mobstat[3]/360)+1)).toFixed(2);
-	myintrv = 100+ 900*(1-(mystat[3]/(1000+mystat[3])));
-	mobintrv = 100+ 900*(1-(mobstat[3]/(1000+mobstat[3])));	
+	mysts.maxhp(), mysts.atk(), mobsts.atk();
+	mysts.intrv();
+	mobsts.intrv();
 	screenup();
 }
 //レベルアップ処理
-function levelup(){
-	for (;mystat[8] >= exptable();){
+function levelup() {
+	for (; mystat[8] >= exptable();) {
 		mystat[8] -= exptable();
 		mystat[9]++;
-		for (i=2;i<=7;i++){
-			mystat[i]+=10;
+		for (i = 2; i <= 7; i++) {
+			mystat[i] += 10;
 		}
 		mystat[10] += 60;
+		mystat[11]++;
 		exptable();
 	}
 }
 //bp振り分け
-function addstat(usepoint,upstat){
-	if (mystat[10]>=usepoint){
-		if (usepoint>=100){
-			for (i=0;i<(usepoint/100);i++){
-				mystat[upstat] +=100;
+function addstat(usepoint, upstat) {
+	if (mystat[10] >= usepoint) {
+		if (usepoint >= 100) {
+			for (i = 0; i < (usepoint / 100); i++) {
+				mystat[upstat] += 100;
 				mystat[10] -= 100;
 			}
-		}else{	
-			for (i=0;i<usepoint;i++){
-				mystat[upstat] ++;
+		} else {
+			for (i = 0; i < usepoint; i++) {
+				mystat[upstat]++;
 				mystat[10]--;
-				console.log(mystat[upstat]);
 			}
 		}
-	screenup();
+		screenup();
 	}
 }
 
 //戦闘処理
 //自分の攻撃フェーズ
-function myattak(){
+function myattak() {
 	//敵のHPが0以下のときにディレイをかけて戦闘終了を呼び出す
-	if(mobstat[1] <= 0) {
+	if (mobstat[1] <= 0) {
 		endbattle("mob0");
-		setTimeout(endbattle,100,"mob0");
+		setTimeout(endbattle, 100, "mob0");
 	}
 	//自分のHPが0以下のときにディレイをかけて戦闘終了を呼び出す
-	else if (mystat[1] <= 0){
+	else if (mystat[1] <= 0) {
 		endbattle("me0");
-		setTimeout(endbattle,100,"me0");
+		setTimeout(endbattle, 100, "me0");
 	}
 	//互いのHPが0以下ではない場合戦闘ダメージを与えて終了
-	else{
+	else {
 		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobsts.reg()).toFixed(2));
 		screenup();
 	}
 }
 //敵の攻撃フェーズ
-function mobattak(){
+function mobattak() {
 	//自分のHPが0以下の場合戦闘終了を呼び出す
-	if(mystat[1] <= 0) {
+	if (mystat[1] <= 0) {
 		screenup();
-		setTimeout(endbattle,100,"me0");
+		setTimeout(endbattle, 100, "me0");
 	}
 	//敵のHPが0以下の場合戦闘終了を呼び出す
-	else if (mobstat[1] <= 0){
+	else if (mobstat[1] <= 0) {
 		screenup()
-	setTimeout(endbattle,100,"mob0");
+		setTimeout(endbattle, 100, "mob0");
 	}
 	//戦闘ダメージを与えて終了
-	else{
-		mystat[1] = Math.floor(mystat[1] - (mobatk*mysts.reg()).toFixed(2));
+	else {
+		mystat[1] = Math.floor(mystat[1] - (mobatk * mysts.reg()).toFixed(2));
 		screenup();
 	}
 }
 //どちらかが死んだ場合の処理どちらもモンスターを新規に作成する
-function endbattle(deadman){
-	screenup();
+function endbattle(deadman) {
+	stopmyattack();
+	stopmobattack();
 	//敵が死んだ場合の処理
-	if (deadman === "mob0"){
+	if (deadman === "mob0") {
 		mystat[8] += mobstat[8];
-		getexp.textContent = "You get EXP :" +mobstat[8];
+		getexp.textContent = "You get EXP :" + mobstat[8];
 		statupdate();
 		mystat[1] = mystat[0];
-		createmob(mobstat[9]);
+		mobsts.create(mobstat[9], false);
 		screenup();
 	}
 	//自分が死んだ場合の処理
-	if (deadman === "me0"){
+	if (deadman === "me0") {
 		mystat[1] = mystat[0];
-		createmob(mystat[9],true);
+		mobsts.create(mystat[9], true);
 		screenup();
 	}
 }
-//新しいモンスターの作成
-function createmob(moblevel,deading){
-	//モンスターレベルの増加
-	if (deading === true){
-		moblevel = moblevel;
-	}else{
-		moblevel += rnd(2);
-	}
-	mobstat[9] = moblevel;
-	//モンスターレベルによる倍率調整を容易にするため別変数を宣言
-	let levelmag = mobstat[9] ;
-	//ベースに倍率を乗算
-	for (i=0;i<mobstat.length-1;i++){
-		mobstat[i] = basemobstat[i]*levelmag;
-	}
-	mobstat[0] = mobstat[9]*100+mobstat[5]*5;
-	mobstat[1] = mobstat[0];
-	stopmyattack();
-	stopmobattack();
-	startmyattack();
-	startmobattack();
-	screenup();
-}
 //描画更新
-function screenup(){
-	nhp.textContent = mystat[1]+"/"+mystat[0];
-	mylv.textContent ="Lv："+mystat[9];
-	mystr.textContent ="STR："+mystat[2];
-	myagi.textContent ="AGI："+mystat[3];
-	mydex.textContent ="DEX："+mystat[4];
-	myvit.textContent ="VIT："+mystat[5];
-	myint.textContent ="INT："+mystat[6];
-	myluk.textContent ="LUK："+mystat[7];
-	mybp.textContent = "BP ："+mystat[10];
-	mhp.textContent = mobstat[1]+"/"+mobstat[0];
-	moblv.textContent ="Lv："+mobstat[9];
-	mobstr.textContent ="STR："+mobstat[2];
-	mobagi.textContent ="AGI："+mobstat[3];
-	mobdex.textContent ="DEX："+mobstat[4];
-	mobvit.textContent ="VIT："+mobstat[5];
-	mobint.textContent ="INT："+mobstat[6];
-	mobluk.textContent ="LUK："+mobstat[7];
-	mydamage.textContent = Math.ceil(mobatk*myreg);
-	mobdamage.textContent = Math.ceil(myatk*mobreg);
-	nowexp.textContent = "exp:"+ mystat[8] +"/"+ exptable();
+function screenup() {
+	nhp.textContent = mystat[1] + "/" + mystat[0];
+	mylv.textContent = "Lv：" + mystat[9];
+	mystr.textContent = "STR：" + mystat[2];
+	myagi.textContent = "AGI：" + mystat[3];
+	mydex.textContent = "DEX：" + mystat[4];
+	myvit.textContent = "VIT：" + mystat[5];
+	myint.textContent = "INT：" + mystat[6];
+	myluk.textContent = "LUK：" + mystat[7];
+	mybp.textContent = "BP ：" + mystat[10];
+	mysp.textContent = "SP ：" + mystat[11];
+	mhp.textContent = mobstat[1] + "/" + mobstat[0];
+	moblv.textContent = "Lv：" + mobstat[9];
+	mobstr.textContent = "STR：" + mobstat[2];
+	mobagi.textContent = "AGI：" + mobstat[3];
+	mobdex.textContent = "DEX：" + mobstat[4];
+	mobvit.textContent = "VIT：" + mobstat[5];
+	mobint.textContent = "INT：" + mobstat[6];
+	mobluk.textContent = "LUK：" + mobstat[7];
+	mydamage.textContent = Math.ceil(mobatk * myreg);
+	mobdamage.textContent = Math.ceil(myatk * mobreg);
+	nowexp.textContent = "exp:" + mystat[8] + "/" + exptable();
 }
-window.onload = statupdate(),startmyattack(),startmobattack();
-setInterval(statupdate,1000);
-function startmyattack(){
-	myattacktime = setInterval(myattak,myintrv);
+window.onload = statupdate(), startmyattack(), startmobattack();
+setInterval(statupdate, 1000);
+
+function startmyattack() {
+	myattacktime = setInterval(myattak, myintrv);
 }
-function stopmyattack(){
+
+function stopmyattack() {
 	clearInterval(myattacktime);
 }
-function startmobattack(){
-	mobattacktime = setInterval(mobattak,mobintrv);
+
+function startmobattack() {
+	mobattacktime = setInterval(mobattak, mobintrv);
 }
-function stopmobattack(){
+
+function stopmobattack() {
 	clearInterval(mobattacktime);
 }

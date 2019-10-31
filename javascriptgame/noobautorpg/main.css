@@ -20,21 +20,32 @@ div.tab{
 	display: flex;
 	height: 50px;
 	width: 750px;
-	margin-left: 100px;
-	margin-bottom: 50px;
+	margin-left: 100px;	
 	align-items:stretch; 
 	text-align: center;
 	vertical-align: center;
 	
 }
 
-#waku{
+#battletab{
 	position:inherit;
 	width: 1024px;
-	height: 768px;
+	height: 718px;
+	margin-top: 10px;
+	border: solid 1px black;
 }
+#skilltab{
+	display: none;
+	position:inherit;
+	margin-top: 10px;
+	width: 1024px;
+	height: 718px;
+	border: solid 1px black;
+}
+
 #hp{
 	margin-left: 100px;
+	margin-top: 30px;
 	min-width: 300px;
 	min-height: 100px;
 	border: solid 1px black;
@@ -44,7 +55,7 @@ div.tab{
 	position: initial;
 }
 #stat{
-	margin-top: 150px;
+	margin-top: 170px;
 	margin-left: 100px;
 	min-width: 300px;
 	max-width: 300px;
@@ -72,6 +83,7 @@ div.tab{
 }
 #mobhp{
 	margin-left: 450px;
+	margin-top: 30px;
 	min-width: 300px;
 	min-height: 100px;
 	border: solid 1px black;
@@ -81,7 +93,7 @@ div.tab{
 	position: initial;
 }
 #mobstat{
-	margin-top: 150px;
+	margin-top: 170px;
 	margin-left: 450px;
 	min-width: 300px;
 	min-height: 300px;
@@ -90,4 +102,18 @@ div.tab{
 
 #tab1:checked ~ #tab>#battle {
 	background-color: lightsalmon;
+}
+
+#tab2:checked ~ #tab>#skill {
+	background-color: lightsalmon;
+}
+#tab1:checked ~ #battletab {
+	opacity: 1;
+}
+#tab2:checked ~ #battletab {
+	display: none;
+	opacity: 0;
+}
+#tab2:checked ~ #skilltab{
+	display: inherit;
 }

@@ -5,17 +5,17 @@
 		<link rel="stylesheet" href="main.css" charset="UTF-8">
 	</head>
 	<body>
-		<input type="checkbox" id="tab1">
-		<input type="checkbox" id="tab2">
+		<input type="radio" id="tab1" name="tabselect" checked="checked">
+		<input type="radio" id="tab2" name="tabselect">
 		<div id="tab">
-			<div class="tab" id="battle">
-				<label for="tab1">BATTLE</label>
+			<div class="tab" id="battle" onclick="tabclick(tab1)">
+				BATTLE
 			</div>
-			<div class="tab">
-				<label for="tab2">SKILL</label>
+			<div class="tab" id="skill" onclick="tabclick(tab2)">
+				SKILL
 			</div>
 		</div>
-		<div id="waku">
+		<div id="battletab">
 			<div id="hp">
 				<div id="nhp"></div>
 				<div id="mydamage"></div>
@@ -55,6 +55,7 @@
 				<div class="bps" onclick="addstat(1000,7)">+</div>
 				<div class="bps" onclick="addstat(10000,7)">+</div>
 				<div id="mybp"></div>
+				<div id="mysp"></div>
 			</div>
 			<div id="mobhp">
 				<div id="mhp"></div>
@@ -70,7 +71,18 @@
 				<div id="mobluk"></div>
 			</div>
 		</div>
-		<canvas width="1024px" height="768px"></canvas>
+		<div id="skilltab">
+			<div class="fastskill"></div>
+			<div class="secondskill"></div>
+			<div class="therdskill"></div>
+			<div class="endskill"></div>
+		</div>
 		<script src="main.js" type="text/javascript" charset="UTF-8"></script>
+		<script type="text/javascript">
+		function tabclick(tabid){
+			document.getElementById(tabid);
+			tabid.checked = true;
+		}
+		</script>
 	</body>
 </html>
