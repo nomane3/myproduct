@@ -10,15 +10,15 @@ let mysts = {
 		return mystat[0];
 	},
 	atk: function () {
-		myatk = (mystat[2] + (mystat[2] / 5) * ((mystat[3] / 360) + 1)).toFixed(2);
+		let myatk = (mystat[2] + (mystat[2] / 5) * ((mystat[3] / 360) + 1)).toFixed(2);
 		return myatk
 	},
 	reg: function () {
-		myreg = (1 - (mystat[2] / (1000 + mystat[2]))) * (1 - (mystat[5] / (500 + mystat[5]))) * (1 - (mystat[6] / 5) / (500 + (mystat[6] / 5)));
+		let myreg = (1 - (mystat[2] / (1000 + mystat[2]))) * (1 - (mystat[5] / (500 + mystat[5]))) * (1 - (mystat[6] / 5) / (500 + (mystat[6] / 5)));
 		return myreg;
 	},
 	intrv: function () {
-		myintrv = 100 + 900 * (1 - (mystat[3] / (1000 + mystat[3])));
+		let myintrv = 100 + 900 * (1 - (mystat[3] / (1000 + mystat[3])));
 		return myintrv;
 	}
 }
@@ -48,32 +48,24 @@ let mobsts = {
 	},
 
 	atk: function () {
-		mobatk = (mobstat[2] + (mobstat[2] / 5) * ((mobstat[3] / 360) + 1)).toFixed(2);
+		let mobatk = (mobstat[2] + (mobstat[2] / 5) * ((mobstat[3] / 360) + 1)).toFixed(2);
+		return mobatk
 	},
 
 	reg: function () {
-		mobreg = (1 - (mobstat[2] / (1000 + mobstat[2]))) * (1 - (mobstat[5] / (500 + mobstat[5]))) * (1 - (mobstat[6] / 5) / (500 + (mobstat[6] / 5)));
+		let mobreg = (1 - (mobstat[2] / (1000 + mobstat[2]))) * (1 - (mobstat[5] / (500 + mobstat[5]))) * (1 - (mobstat[6] / 5) / (500 + (mobstat[6] / 5)));
 		return mobreg;
 	},
 
 	intrv: function () {
-		mobintrv = 100 + 900 * (1 - (mobstat[3] / (1000 + mobstat[3])));
+		let mobintrv = 100 + 900 * (1 - (mobstat[3] / (1000 + mobstat[3])));
 		return mobintrv;
 	}
 }
-
+let f = 0;
 let basemobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
-let myintrv = 1000;
-let mobintrv = 1000;
-let myatk;
-let mobatk;
-let myreg;
-let mobreg;
 let i = 0;
-document.getElementById(hp);
-document.getElementById(stat);
-document.getElementById(mobhp);
-document.getElementById(mobstat);
+document.getElementById(battletab)
 document.getElementById(skilltab);
 let myattacktime;
 let mobattacktime;
@@ -100,7 +92,9 @@ let exptable = function () {
 //計算が必要なステータスの更新
 function statupdate() {
 	levelup();
-	mysts.maxhp(), mysts.atk(), mobsts.atk();
+	mysts.maxhp();
+	mysts.atk();
+	mobsts.atk();
 	mysts.intrv();
 	mobsts.intrv();
 	screenup();
@@ -151,7 +145,7 @@ function myattak() {
 	}
 	//互いのHPが0以下ではない場合戦闘ダメージを与えて終了
 	else {
-		mobstat[1] = Math.floor(mobstat[1] - (myatk * mobsts.reg()).toFixed(2));
+		mobstat[1] = Math.floor(mobstat[1] - (mysts.atk() * mobsts.reg()).toFixed(2));
 		screenup();
 	}
 }
@@ -169,7 +163,7 @@ function mobattak() {
 	}
 	//戦闘ダメージを与えて終了
 	else {
-		mystat[1] = Math.floor(mystat[1] - (mobatk * mysts.reg()).toFixed(2));
+		mystat[1] = Math.floor(mystat[1] - (mobsts.atk() * mysts.reg()).toFixed(2));
 		screenup();
 	}
 }
@@ -213,25 +207,60 @@ function screenup() {
 	mobvit.textContent = "VIT：" + mobstat[5];
 	mobint.textContent = "INT：" + mobstat[6];
 	mobluk.textContent = "LUK：" + mobstat[7];
-	mydamage.textContent = Math.ceil(mobatk * myreg);
-	mobdamage.textContent = Math.ceil(myatk * mobreg);
+	mydamage.textContent = Math.ceil(mobsts.atk() * mysts.reg());
+	mobdamage.textContent = Math.ceil(mysts.atk() * mobsts.reg());
 	nowexp.textContent = "exp:" + mystat[8] + "/" + exptable();
 }
-window.onload = statupdate(), startmyattack(), startmobattack();
-setInterval(statupdate, 1000);
 
-function startmyattack() {
-	myattacktime = setInterval(myattak, myintrv);
-}
+//開いたときにステータスアップデート、アタックタイマーを起動する
+window.onload = statupdate(), startmyattack(), startmobattack(),startstatupdate();
+//timer関係
+function startstatupdate(){setInterval(statupdate, 1000);};
+function startmyattack() {myattacktime = setInterval(myattak, mysts.intrv());};
+function stopmyattack() {clearInterval(myattacktime);};
+function startmobattack() {mobattacktime = setInterval(mobattak, mobsts.intrv());};
+function stopmobattack() {clearInterval(mobattacktime);};
 
-function stopmyattack() {
-	clearInterval(myattacktime);
-}
 
-function startmobattack() {
-	mobattacktime = setInterval(mobattak, mobintrv);
-}
 
-function stopmobattack() {
-	clearInterval(mobattacktime);
-}
+//アイテム作成処理fの宣言以外はここにあるので単品でも動く
+let itemstat=[];
+let itemid=[];
+
+function itemcreate(itemlv){
+	if (f<40){
+		for(i=0;i<7;i++){
+			itemstat[i] = Math.floor(ran.getran(4)*itemlv*25/10);
+		};
+		itemid[f]={itemlv:0,str:0,agi:0,dex:0,vit:0,int:0,luk:0,point:0};
+		itemstat[6] = ran.getran(9);
+		let whatpoint = function() { 
+			switch(itemstat[6]){
+				case 0:return "head";
+				case 1:return "neck";
+				case 2:return "back";
+				case 3:return "body";
+				case 4:return "hand";
+				case 5:return "ring";
+				case 6:return "arm";
+				case 7:return "waist";
+				case 8:return "leg";
+				case 9:return "foot";
+			};
+		};
+		itemid[f].itemlv = itemlv;
+		itemid[f].str = itemstat[0];
+		itemid[f].agi = itemstat[1];
+		itemid[f].dex = itemstat[2];
+		itemid[f].vit = itemstat[3];
+		itemid[f].int = itemstat[4];
+		itemid[f].luk = itemstat[5];
+		itemid[f].point = whatpoint();
+		itemlist.innerHTML = itemlist.innerHTML+'<div class="item" id="item'+f+'">'+itemid[f].point+'</div>';
+		f++;
+		console.log (itemid);
+		}
+	else{
+		console.log("inventory full")
+	};
+};

@@ -28,6 +28,7 @@ div.tab{
 }
 
 #battletab{
+	display:none;
 	position:inherit;
 	width: 1024px;
 	height: 718px;
@@ -35,6 +36,14 @@ div.tab{
 	border: solid 1px black;
 }
 #skilltab{
+	display: none;
+	position:inherit;
+	margin-top: 10px;
+	width: 1024px;
+	height: 718px;
+	border: solid 1px black;
+}
+#inventorytab{
 	display: none;
 	position:inherit;
 	margin-top: 10px;
@@ -81,6 +90,9 @@ div.tab{
  max-width: 22px;
  height: 22px;
 }
+.item{
+	position: initial;
+}
 #mobhp{
 	margin-left: 450px;
 	margin-top: 30px;
@@ -100,20 +112,9 @@ div.tab{
 	border: solid 1px black;
 }
 
-#tab1:checked ~ #tab>#battle {
-	background-color: lightsalmon;
-}
-
-#tab2:checked ~ #tab>#skill {
-	background-color: lightsalmon;
-}
-#tab1:checked ~ #battletab {
-	opacity: 1;
-}
-#tab2:checked ~ #battletab {
-	display: none;
-	opacity: 0;
-}
-#tab2:checked ~ #skilltab{
-	display: inherit;
-}
+#tab1:checked ~ #tab>#battle {background-color: lightsalmon;}
+#tab2:checked ~ #tab>#skill {background-color: lightsalmon;}
+#tab3:checked ~ #tab>#inventory {background-color: lightsalmon;}
+#tab1:checked ~ #battletab {display:inherit;}
+#tab2:checked ~ #skilltab{display: inherit;}
+#tab3:checked ~ #inventorytab{display: inherit;}

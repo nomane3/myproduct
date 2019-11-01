@@ -7,12 +7,16 @@
 	<body>
 		<input type="radio" id="tab1" name="tabselect" checked="checked">
 		<input type="radio" id="tab2" name="tabselect">
+		<input type="radio" id="tab3" name="tabselect">
 		<div id="tab">
 			<div class="tab" id="battle" onclick="tabclick(tab1)">
 				BATTLE
 			</div>
 			<div class="tab" id="skill" onclick="tabclick(tab2)">
 				SKILL
+			</div>
+			<div class="tab" id="inventory" onclick="tabclick(tab3)">
+				INVENTORY
 			</div>
 		</div>
 		<div id="battletab">
@@ -55,6 +59,7 @@
 				<div class="bps" onclick="addstat(1000,7)">+</div>
 				<div class="bps" onclick="addstat(10000,7)">+</div>
 				<div id="mybp"></div>
+				<div class="bps" onclick="itemcreate(mobstat[9])">+</div>
 				<div id="mysp"></div>
 			</div>
 			<div id="mobhp">
@@ -76,6 +81,12 @@
 			<div class="secondskill"></div>
 			<div class="therdskill"></div>
 			<div class="endskill"></div>
+		</div>
+		<div id="inventorytab">
+			<div id="itemlist">
+				<div id="item1" class="item"></div>
+			</div>
+			<div id="equiplist"></div>
 		</div>
 		<script src="main.js" type="text/javascript" charset="UTF-8"></script>
 		<script type="text/javascript">
