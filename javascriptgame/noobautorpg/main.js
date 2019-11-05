@@ -288,7 +288,7 @@ function itemcreate(itemlv){
 			itemstatview =itemstatview+" "+paradata[i]+":"+itemid[f].view(i);
 		}
 		//出力されたステータスをitemlistにDOMで出力
-		itemlist.innerHTML = itemlist.innerHTML+'<div class="item" id="item'+f+'">'+itemid[f].point+'stat:'+itemstatview+'</div>';
+		itemlist.innerHTML = itemlist.innerHTML+'<div class="item" id="item'+f+'">'+itemid[f].point+' stat'+itemstatview+'</div>';
 		//出力済みデータを初期化
 		itemstatview = " ";
 
@@ -299,3 +299,7 @@ function itemcreate(itemlv){
 		console.log("inventory full")
 	};
 };
+
+function itemequip(equipid){
+	
+}
