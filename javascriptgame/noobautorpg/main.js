@@ -62,8 +62,8 @@ let mobsts = {
 		return mobintrv;
 	}
 }
-let f = 0;
 let basemobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
+let f = 0;
 let i = 0;
 document.getElementById(battletab)
 document.getElementById(skilltab);
@@ -221,18 +221,34 @@ function stopmyattack() {clearInterval(myattacktime);};
 function startmobattack() {mobattacktime = setInterval(mobattak, mobsts.intrv());};
 function stopmobattack() {clearInterval(mobattacktime);};
 
-
-
 //アイテム作成処理fの宣言以外はここにあるので単品でも動く
 let itemstat=[];
 let itemid=[];
-
+let paradata = ['str','agi','dex','vit','int','luk'];
+let itemstatview = " ";
+//item作成
 function itemcreate(itemlv){
+	//アイテムの総数が40以下なら作成する
 	if (f<40){
+		//各ステータス補正の計算
 		for(i=0;i<7;i++){
 			itemstat[i] = Math.floor(ran.getran(4)*itemlv*25/10);
 		};
-		itemid[f]={itemlv:0,str:0,agi:0,dex:0,vit:0,int:0,luk:0,point:0};
+		//各ステータス格納場所を作成＆初期値を設定
+		itemid[f]={itemlv:0,str:0,agi:0,dex:0,vit:0,int:0,luk:0,point:0,
+			//各ステータスの配列化
+			view: function(fox){
+				switch(fox){
+					case 0:return itemid[f].str;
+					case 1:return itemid[f].agi;
+					case 2:return itemid[f].dex;
+					case 3:return itemid[f].vit;
+					case 4:return itemid[f].int;
+					case 5:return itemid[f].luk;
+				}
+			}
+		};
+		//装備場所決定
 		itemstat[6] = ran.getran(9);
 		let whatpoint = function() { 
 			switch(itemstat[6]){
@@ -248,6 +264,7 @@ function itemcreate(itemlv){
 				case 9:return "foot";
 			};
 		};
+		//各ステータス補正値を入力
 		itemid[f].itemlv = itemlv;
 		itemid[f].str = itemstat[0];
 		itemid[f].agi = itemstat[1];
@@ -256,9 +273,19 @@ function itemcreate(itemlv){
 		itemid[f].int = itemstat[4];
 		itemid[f].luk = itemstat[5];
 		itemid[f].point = whatpoint();
-		itemlist.innerHTML = itemlist.innerHTML+'<div class="item" id="item'+f+'">'+itemid[f].point+'</div>';
+		
+		//htmlに出力する処理
+		//各ステータスを出力
+		for(i=0;i<6;i++){
+			itemstatview =itemstatview+" "+paradata[i]+":"+itemid[f].view(i);
+		}
+		//出力されたステータスをitemlistにDOMで出力
+		itemlist.innerHTML = itemlist.innerHTML+'<div class="item" id="item'+f+'">'+itemid[f].point+'stat:'+itemstatview+'</div>';
+		//出力済みデータを初期化
+		itemstatview = " ";
+
+		console.log (itemid[f]);
 		f++;
-		console.log (itemid);
 		}
 	else{
 		console.log("inventory full")
