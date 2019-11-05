@@ -1,22 +1,26 @@
-//宣言が必要な変数置き場
+//宣言が必要な初期変数置き場
 //stat順、0:maxHP,1:nowHP,2:STR,3:AGI,4:DEX,5:VIT,6:INT,7:LUK,8:exp,9:lv,10:BonusPoint,11:skillpoint
 let mystat = [150, 150, 10, 10, 10, 10, 10, 10, 0, 1, 0, 0];
 let mobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
 //testmesod
 //メソッドに処理を記述して使いまわしたい処理、プロパティ名を使いまわす
 let mysts = {
+	//hp計算
 	maxhp: function () {
 		mystat[0] = mystat[9] * 100 + mystat[5] * 5;
 		return mystat[0];
 	},
+	//攻撃力算出
 	atk: function () {
 		let myatk = (mystat[2] + (mystat[2] / 5) * ((mystat[3] / 360) + 1)).toFixed(2);
 		return myatk
 	},
+	//防御率算出
 	reg: function () {
 		let myreg = (1 - (mystat[2] / (1000 + mystat[2]))) * (1 - (mystat[5] / (500 + mystat[5]))) * (1 - (mystat[6] / 5) / (500 + (mystat[6] / 5)));
 		return myreg;
 	},
+	//攻撃間隔算出
 	intrv: function () {
 		let myintrv = 100 + 900 * (1 - (mystat[3] / (1000 + mystat[3])));
 		return myintrv;
@@ -39,37 +43,42 @@ let mobsts = {
 		for (i = 0; i < mobstat.length - 1; i++) {
 			mobstat[i] = basemobstat[i] * levelmag;
 		}
+		//maxhpの計算
 		mobstat[0] = mobstat[9] * 30 + mobstat[5] * 10;
+		//現在hpをmaxhpと同じに
 		mobstat[1] = mobstat[0];
 		startmyattack();
 		startmobattack();
 		screenup();
 		return levelmag;
 	},
-
+	//Mob攻撃力計算
 	atk: function () {
 		let mobatk = (mobstat[2] + (mobstat[2] / 5) * ((mobstat[3] / 360) + 1)).toFixed(2);
 		return mobatk
 	},
-
+	//Mob防御率計算
 	reg: function () {
 		let mobreg = (1 - (mobstat[2] / (1000 + mobstat[2]))) * (1 - (mobstat[5] / (500 + mobstat[5]))) * (1 - (mobstat[6] / 5) / (500 + (mobstat[6] / 5)));
 		return mobreg;
 	},
-
+	//Mob攻撃間隔計算
 	intrv: function () {
 		let mobintrv = 100 + 900 * (1 - (mobstat[3] / (1000 + mobstat[3])));
 		return mobintrv;
 	}
 }
+//mobベースステータス
 let basemobstat = [30, 30, 10, 10, 10, 10, 10, 10, 10, 1];
 let f = 0;
 let i = 0;
+//DOMのために取得
 document.getElementById(battletab)
 document.getElementById(skilltab);
+//変数名の確保
 let myattacktime;
 let mobattacktime;
-//ランダム関数色々
+//ランダム関数3種類 (ran.getran(num)=rnd(num))
 let ran = {
 	getran: function (ran_num) {
 		rand = Math.floor(Math.random() * (ran_num + 1));
@@ -80,7 +89,6 @@ let ran = {
 		return rand;
 	}
 }
-
 function rnd(ran_num) {
 	rand = Math.floor(Math.random() * ran_num + 1);
 	return rand;
@@ -89,7 +97,7 @@ function rnd(ran_num) {
 let exptable = function () {
 	return (mystat[9] * mystat[9]) + 10;
 }
-//計算が必要なステータスの更新
+//再計算が必要なステータスの更新処理
 function statupdate() {
 	levelup();
 	mysts.maxhp();
@@ -112,7 +120,7 @@ function levelup() {
 		exptable();
 	}
 }
-//bp振り分け
+//bp振り分け処理呼び出すとステータスを振り分ける
 function addstat(usepoint, upstat) {
 	if (mystat[10] >= usepoint) {
 		if (usepoint >= 100) {
